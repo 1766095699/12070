@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.mymusic</groupId>
+    <artifactId>music</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>music</name>
+    <description>Demo project for Spring Boot</description>
+    <!--这个packaging一定要写,否则无法导入子模块-->
+    <packaging>pom</packaging>
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+    <modules>
+        <module>renren-generator</module>
+        <module>music-server1</module>
+        <module>third-part</module>
+        <module>myrabbitmq</module>
+        <module>gateway</module>
+        <module>music-songs</module>
+        <module>music-common</module>
+        <module>music-auth</module>
+    </modules>
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.5.1</version>
+            <configuration>
+                <source>${java.version}</source>
+                <target>${java.version}</target>
+                <encoding>UTF-8</encoding>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+</project>

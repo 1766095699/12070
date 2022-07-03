@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mymusic.music.dao.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.mymusic.music.domain.Message">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="fromid" jdbcType="INTEGER" property="fromid"/>
+        <result column="toid" jdbcType="INTEGER" property="toid"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,fromid,toid,content,type,state,send_time,status
+    </sql>
+
+    <select id="getAllMessages" resultMap="BaseResultMap" parameterType="integer">
+        select
+        <include refid="Base_Column_List"/>
+        from chatmessage
+        where fromid=#{fromid}
+        and toid=#{toid}
+        order by send_time
+    </select>
+
+    <select id="getLastMessage" resultMap="BaseResultMap" parameterType="integer">
+        select
+        <include refid="Base_Column_List"/>
+        from chatmessage
+        where fromid=#{fromid}
+        and toid=#{toid}
+        and state = 0
+        order by send_time desc
+        limit 1
+    </select>
+
+    <!--保存两人的聊天记录-->
+    <insert id="saveMessages" parameterType="com.mymusic.music.domain.Message">
+        insert into chatmessage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fromid != null">
+                fromid,
+            </if>
+            <if test="toid != null">
+                toid,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            send_time,
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="fromid != null">
+                #{fromid},
+            </if>
+            <if test="toid != null">
+                #{toid},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="state != null">
+                #{state},
+            </if>
+            now(),
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--更新消息状态(已读未读),未来做功能拓展-->
+    <update id="updateStatus" parameterType="com.mymusic.music.domain.Message">
+        update chatmessage
+        set status = 1
+        where id = #{id}
+    </update>
+
+    <!--更新消息状态(已读未读),未来做功能拓展-->
+    <update id="updateContentStatus" parameterType="java.lang.Integer">
+        update chatmessage set status=1 where fromid=#{fromid} and toid=#{toid}
+    </update>
+
+    <!--根据两人发送最后一条消息的时间来获取和fromid有聊天记录的用户的最后一条聊天记录-->
+    <select id="getIndexList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+SELECT 	* FROM (SELECT * FROM chatmessage WHERE fromid=#{fromid} ORDER BY send_time DESC LIMIT 10000) AS c2 GROUP BY c2.toid
+    </select>
+</mapper>

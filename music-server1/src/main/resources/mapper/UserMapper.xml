@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mymusic.music.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.mymusic.music.domain.User" autoMapping="true">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="avator" jdbcType="VARCHAR" property="avatar"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,nickname,avator
+    </sql>
+
+
+    <!--获取用户的好友列表(未来拓展)-->
+    <select id="getFriends" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from consumer
+        where id in (
+            select friendid
+            from friendlist
+            where userid=#{id}
+        )
+    </select>
+
+    <!--获取用户未接收的好友信息列表-->
+    <select id="getNoReceiveUser" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from consumer
+        where id in (
+            select toid
+            from chatmessage
+            where status = 0
+            and fromid = #{id}
+            and state = 1
+        )
+        or id in (
+            select fromid
+            from chatmessage
+            where status = 0
+            and toid = #{id}
+            and state = 0
+        )
+    </select>
+
+    <!--获取用户A未接收的来自用户B消息数-->
+    <select id="getNoReceiveMessageCounts" resultType="integer" parameterType="integer">
+        select count(*)
+        from chatmessage
+        where fromid = #{fromid}
+        and toid = #{toid}
+        and state = 0
+        and status = 0
+    </select>
+
+    <!--获取用户状态-->
+    <select id="getStatus" resultType="java.lang.Integer" parameterType="integer">
+        select status
+        from consumer
+        where id = #{id}
+    </select>
+
+    <!--通过用户名获取用户详情-->
+    <select id="getSingleUser" parameterType="java.lang.String" resultType="com.mymusic.music.domain.User">
+        select id,username,nickname,avator avatar from consumer where username=#{username};
+    </select>
+
+    <!--更新用户状态(控制用户上下线的状态,未来做功能拓展)-->
+    <update id="updateUserStatus" parameterType="java.lang.Integer">
+      update consumer set status=#{status} where id=#{id}
+    </update>
+
+    <!--通过id获取用户信息-->
+    <select id="getUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id,username,nickname,avator from consumer where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 115.159.220.44:8848
+        cluster-name: HZ
+      config:
+        server-addr: 115.159.220.44:8848
+
+#    loadbalancer:
+#      ribbon:
+#        enabled: false
+
+  application:
+    name: music-auth

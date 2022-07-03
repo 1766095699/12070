@@ -1,0 +1,33 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: music-gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 115.159.220.44:8848
+      config:
+        server-addr: 115.159.220.44:8848
+    sentinel:
+      transport:
+        port: 8999
+        dashboard: 127.0.0.1:8888
+      web-context-unify: false
+      eager: true
+    gateway:
+      routes:
+      - id: music-songs # 路由的id,没有规定规则但要求唯一,建议配合服务名
+        #匹配后提供服务的路由地址
+        uri: lb://music-songs
+        predicates:
+        #        - Query=red,1,blue, 2
+        #        - Path=/songs/songs1/test3
+        - Path=/songs/** # 断言，路径相匹配的进行路由
+      #        - Name=aki #自定义断言
+      discovery:
+        locator:
+          enabled: true
+          route-id-prefix: gataway-

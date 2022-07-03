@@ -1,0 +1,44 @@
+server:
+  port: 8081
+spring:
+  cloud:
+    gateway:
+      routes:
+#        1.歌曲微服务
+      - id: music-songs # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+        uri: lb://music-songs
+        filters:
+         - Grayscale=true
+#        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        predicates:
+#        - Query=red,1,blue, 2
+#        - Path=/songs/songs1/test3
+        - Path=/songs/** # 断言，路径相匹配的进行路由
+#        - Name=aki #自定义断言
+#     2.用户微服务
+      - id: music-auth # 路由的id,没有规定规则但要求唯一,建议配合服务名
+        #匹配后提供服务的路由地址
+        uri: lb://music-auth
+        predicates:
+        - Path=/auth/** # 断言，路径相匹配的进行路由
+##      3.订单微服务
+      - id: music-order # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+        uri: lb://music-order
+        predicates:
+        - Path=/order/** # 断言，路径相匹配的进行路由
+##       4.server微服务
+      - id: music-server1 # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+        uri: http://127.0.0.1:14000
+        predicates:
+        - Path=/server1/** # 断言，路径相匹配的进行路由
+      #       5.积分微服务
+      - id: music-point # 路由的id,没有规定规则但要求唯一,建议配合服务名
+          #匹配后提供服务的路由地址
+        uri: lb://music-point
+        predicates:
+        - Path=/point/** # 断言，路径相匹配的进行路由
+  application:
+    name: music-gateway

@@ -1,0 +1,29 @@
+spring:
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 115.159.220.44:8848
+        cluster-name: HZ
+      config:
+        server-addr: 115.159.220.44:8848
+        file-extension: yaml #指定nacos配置文件的类型
+#        namespace: b06fe123-22aa-489d-b1ba-697183cbd9bf #指定要用哪个namespace的配置文件
+#        group: devtest #指定要用哪个group的配置文件
+        prefix: musicsongs #规定前缀,只要写了这行配置,那文件前缀就要和配置的相同才能生效
+    sentinel:
+      eager: true  #这行配置我一直无法生效。难道是我理解错意思了吗
+      datasource:
+        ds1: # 名称随意
+          nacos:
+            server-addr: 115.159.220.44:8848 # nacos地址
+            dataId: music-songs-sentinel-flow #nacos配置的dataId
+            groupId: DEFAULT_GROUP # nacos配置的groupId
+            data_type: json # 配置文件类型
+            rule-type: flow #规则类型
+  application:
+    name: music-songs
+feign:
+  sentinel:
+    enabled: true

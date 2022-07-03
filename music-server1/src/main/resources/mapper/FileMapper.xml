@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mymusic.music.dao.FileMapper">
+    <!--两人发送文件的时候插入文件的相关数据-->
+   <insert id="insertFilePath" parameterType="com.mymusic.music.domain.MyFile" >
+       insert into filepath (filepath,filename,`size`,create_time)values(#{file.filepath},#{file.filename},#{file.size},now())
+   </insert>
+    <!--通过文件路径获取文件的相关属性-->
+    <select id="getFile" parameterType="java.lang.String" resultType="com.mymusic.music.domain.MyFile">
+        select * from filepath where filepath=#{filepath}
+    </select>
+</mapper>
